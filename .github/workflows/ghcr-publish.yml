@@ -31,6 +31,6 @@ jobs:
                 "registry_package": {
                     "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }})"
                 },
-                "username" : $GHCR_USERNAME
-                "token": $GITHUB_TOKEN
+                "username" : "${{ secrets.GHCR_USERNAME }}"
+                "token": "${{ secrets.GITHUB_TOKEN }}"
               }'
