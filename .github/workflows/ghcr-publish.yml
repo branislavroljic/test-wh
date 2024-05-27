@@ -1,12 +1,17 @@
 name: Notify Webhook on Package Publish
 
 on:
-  registry_package:
-    types: [published]
+  workflow_run:
+    workflows: ["App Docker Image"]
+    types:
+      - completed
 
 jobs:
   notify-webhook:
     runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+     
     steps:
       - name: Send webhook notification
         env:
