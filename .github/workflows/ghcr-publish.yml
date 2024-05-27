@@ -1,0 +1,28 @@
+name: Notify Webhook on Package Publish
+
+on:
+  registry_package:
+    types: [published]
+
+jobs:
+  notify-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send webhook notification
+        env:
+          WEBHOOK_URL: 'https://smee.io/G84SgLL6WsdARUt'
+          GHCR_PAT: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner }}
+        run: |
+          curl -X POST $WEBHOOK_URL \
+          -H "Content-Type: application/json" \
+          -d '{
+                "action": "${{ github.event.action }}",
+                "registry_package": {
+                  "package_version": {
+                    "version": "${{ github.event.registry_package.package_version.version }}",
+                    "installation_command": "docker pull ghcr.io/${{ github.repository }}/$(echo ${{ github.event.registry_package.package_version.version }})"
+                  }
+                },
+                "token": "$GHCR_PAT"
+              }'
