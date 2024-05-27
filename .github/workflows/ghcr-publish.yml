@@ -1,5 +1,10 @@
 name: Notify Webhook on Package Publish
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/app
+
+
 on:
   workflow_run:
     workflows: ["App Docker Image"]
@@ -24,7 +29,8 @@ jobs:
           -d '{
                 "action": "${{ github.event.action }}",
                 "registry_package": {
-                    "installation_command": "docker pull ghcr.io/${{ github.repository }}/$(echo ${{ github.event.registry_package.package_version.version }})"
+                    "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }})"
                 },
-                "token": "${{GITHUB_TOKEN}}"
+                "username" : $GHCR_USERNAME
+                "token": $GITHUB_TOKEN
               }'
