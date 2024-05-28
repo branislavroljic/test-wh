@@ -29,10 +29,8 @@ jobs:
           -d @- <<EOF
           {
             "action": "${{ github.event.action }}",
-            "registry_package": {
-              "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:latest"
-            },
+            "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:latest"
             "username": "$GHCR_USERNAME",
-            "token": "$GHCR_PAT"
+            "token": "$GITHUB_TOKEN"
           }
           EOF
