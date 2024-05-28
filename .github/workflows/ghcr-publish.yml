@@ -26,11 +26,13 @@ jobs:
         run: |
           curl -X POST $WEBHOOK_URL \
           -H "Content-Type: application/json" \
-          -d '{
-                "action": "${{ github.event.action }}",
-                "registry_package": {
-                    "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }})"
-                },
-                "username" : "${{ secrets.GHCR_USERNAME }}"
-                "token": "${{ secrets.GITHUB_TOKEN }}"
-              }'
+          -d @- <<EOF
+          {
+            "action": "${{ github.event.action }}",
+            "registry_package": {
+              "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:latest"
+            },
+            "username": "$GHCR_USERNAME",
+            "token": "$GHCR_PAT"
+          }
+          EOF
