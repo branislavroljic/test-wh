@@ -21,16 +21,16 @@ jobs:
       - name: Send webhook notification
         env:
           WEBHOOK_URL: "https://smee.io/G84SgLL6WsdARUt"
+          GITHUB_USERNAME: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ github.repository_owner }}
         run: |
           curl -X POST $WEBHOOK_URL \
           -H "Content-Type: application/json" \
           -d @- <<EOF
           {
             "action": "${{ github.event.action }}",
-            "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:latest"
-            "username": "$GHCR_USERNAME",
+            "installation_command": "docker pull ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:latest",
+            "username": "$GITHUB_USERNAME",
             "token": "$GITHUB_TOKEN"
           }
           EOF
