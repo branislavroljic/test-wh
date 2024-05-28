@@ -1,0 +1,52 @@
+services:
+  adminer:
+    container_name: factory-adminer
+    image: adminer
+    restart: always
+    ports:
+      - 30000:8080
+
+  caddy:
+    container_name: factory-caddy
+    image: caddy:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config
+  controls-db:
+    container_name: controls-db
+    image: postgres:15.1
+    restart: always
+    environment:
+      POSTGRES_DB: controls
+      POSTGRES_USER: controls
+      POSTGRES_PASSWORD: ${PG_PROD_PASS}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data/
+
+  controls-api:
+    image: ghcr.io/bojanb98/upravljacke-kontrole/api:latest
+    pull_policy: always
+    container_name: controls-api
+    restart: always
+    environment:
+      ConnectionStrings__Default: "Host=controls-db;Port=5432;Database=controls;Username=controls;Password=${PG_PROD_PASS};"
+      ASPNETCORE_ENVIRONMENT: "Production"
+
+  controls-app:
+    image: ghcr.io/bojanb98/upravljacke-kontrole/app:latest
+    pull_policy: always
+    container_name: controls-app
+    restart: always
+    environment:
+      VITE_API_URL: "http://controls-api:8080/api/"
+
+networks:
+  default:
+    name: controls
+    external: false

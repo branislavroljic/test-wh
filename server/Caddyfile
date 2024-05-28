@@ -1,0 +1,7 @@
+127.0.0.1 {
+    reverse_proxy controls-app:3000
+}
+
+api.127.0.0.1 {
+    reverse_proxy controls-api:8080
+}
