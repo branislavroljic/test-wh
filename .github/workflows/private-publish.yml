@@ -27,7 +27,7 @@ jobs:
         run: npm i -g pkg
 
       - name: Build server file
-        run: ncc build "private-server-cron/version-checker.js
+        run: ncc build ./private-server-cron/version-checker.js
 
       - name: Build Linux binary
         run: pkg --targets node18-linux-x64 ./private-server-cron/dist/index.js --out-path ./private-server-cron/dist
