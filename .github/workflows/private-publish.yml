@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Binary release ${{ github.sha }}
+          tag_name: ${{ github.ref }}
+          release_name: Binary release ${{ github.ref }}
           body: |
             Binaries for commit ${{ github.sha }}
           draft: false
