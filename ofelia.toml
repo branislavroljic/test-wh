@@ -1,0 +1,4 @@
+[job-run "fetch-latest"]
+schedule = "*/10 * * * *"
+container = "fetch-latest-container"
+image = "fetch-latest:latest"

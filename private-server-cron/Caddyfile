@@ -1,0 +1,7 @@
+{$SITE_ADDRESS} {
+    reverse_proxy controls-app:3000
+}
+
+api.{$SITE_ADDRESS} {
+    reverse_proxy controls-api:8080
+}

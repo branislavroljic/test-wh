@@ -1,0 +1,4 @@
+[job-run "version-checker"]
+schedule = @every 10m
+container = "version-checker"
+image = "version-checker:latest"
