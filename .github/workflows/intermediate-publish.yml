@@ -28,28 +28,33 @@ jobs:
         id: last-release
         shell: bash
         run: |
-          tag=`git tag --sort=creatordate | tail -2 | sed -n '1p'`
+          tag=$(git tag --sort=creatordate | tail -2 | sed -n '1p')
           echo "Tag: $tag"
-          sha=`git show-ref --tags | grep $tag | awk '{print $1;}'`
+          sha=$(git show-ref --tags | grep $tag | awk '{print $1;}')
           echo "SHA: $sha"
-          echo "::set-output name=sha::$sha"
+          echo "sha=$sha" >> $GITHUB_ENV
+          
       - name: Check changes
         uses: dorny/paths-filter@v3
         id: changes
         with:
-          base: ${{ steps.last-release.outputs.sha }}
+          base: ${{ env.sha }}
           filters: |
             intermediate:
               - './intermediate-server/**'
+
+      - name: Set `should-run` output
+        run: echo "should_run=${{ steps.changes.outputs.intermediate }}" >> $GITHUB_ENV
+
     outputs:
-      should-run: ${{steps.changes.outputs.intermediate}}
+      should-run: ${{ steps.changes.outputs.intermediate }}
   
   build-and-push:
     runs-on: ubuntu-latest
 
     needs: check-changes
 
-    if: needs.check-changes.should-run == 'true'
+    if: needs.check-changes.outputs.should-run == 'true'
 
     steps:
       - name: "Checkout GitHub Action"
@@ -90,10 +95,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - # Temp fix
-        # https://github.com/docker/build-push-action/issues/252
-        # https://github.com/moby/buildkit/issues/1896
-        name: Move cache
+
+      - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache

@@ -65,7 +65,7 @@ app.get("/version", async (c) => {
 });
 
 app.get("/", (c) => {
-  return c.text("Hello Honoooo!");
+  return c.text("Hello Honoooodd!");
 });
 
 console.log(`Server is running on port ${port}`);
