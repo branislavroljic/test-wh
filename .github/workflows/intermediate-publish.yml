@@ -5,11 +5,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}/intermediate
 
 on:
-  push:
-    branches: ["main", "119-remix-refactor"]
-    paths:
-      - "intermediate-server/**"
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   check-changes:
