@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    image: ghcr.io/branislavroljic/test-wh/app:latest
+    pull_policy: always
+    container_name: test-wh-app
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/usr/app
+      - /usr/app/node_modules
+    command: ["node", "app.js"]
+    labels:
+      - wud.watch=true
+
+  wud:
+    image: fmartinou/whats-up-docker
+    container_name: wud
+    restart: always
+    volumes:
+      - ./docker-compose.yaml:/wud/docker-compose.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # WUD_WATCHER_DOCKER_ENABLE: "true"
+      WUD_TRIGGER_DOCKERCOMPOSE_EXAMPLE_FILE: /wud/docker-compose.yaml
+      # WUD_WATCHER_GHCR_ENABLE: "true" 
+      WUD_REGISTRY_GHCR_USERNAME: "${GHCR_USERNAME}"
+      WUD_REGISTRY_GHCR_TOKEN: "${GHCR_TOKEN}"
+      # WUD_WATCHER_GHCR_USERNAME: "branislavroljic"
+      # WUD_WATCHER_GHCR_TOKEN: "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"
+      # WUD_TRIGGER_DOCKER_MODE: "RESTART"
+      # WUD_TRIGGER_DOCKER_TARGETS: "app"
+      WUD_WATCHER_LOCAL_WATCHBYDEFAULT: false
+      WUD_LOG_LEVEL: debug
+      WUD_WATCHER_DOCKER_CRON: "*/1 * * * *"
+      # WUD_WATCHER_LOCAL_SOCKET : /var/run/docker.sock
+    ports:
+      - 3000:3000
